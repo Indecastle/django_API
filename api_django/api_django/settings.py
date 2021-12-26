@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-import os
+import os, sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-1$m%c)kzn_bxe*3s03=!mxa6j&!3*z8)x4m!arq9odbfqa59&+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'indecastle.pythonanywhere.com']
 
 
 # Application definition
@@ -51,7 +51,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'api_django.urls'
+IS_OLD_PYTHON = sys.version.startswith("3.7")
+URL_PREFIX = "api_django." if IS_OLD_PYTHON else ''
+
+ROOT_URLCONF = URL_PREFIX + 'api_django.urls'
 
 TEMPLATES = [
     {
@@ -113,6 +116,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+SWAGGER_SETTINGS = {
+   'USE_SESSION_AUTH': False
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
