@@ -38,7 +38,7 @@ class TranslateView(APIView):
         target = request.query_params.get('target')
         text = request.query_params.get('text')
 
-        translated = GoogleTranslator(source='auto', target=target).translate(text)
+        translated = GoogleTranslator(source=source, target=target).translate(text)
 
         result = {"text": translated}
         serializer = LanguageSerializer(result, many=False)
@@ -69,7 +69,7 @@ class TranslateView(APIView):
         target = request.data.get('target')
         text = request.data.get('text')
 
-        translated = GoogleTranslator(source='auto', target=target).translate(text)
+        translated = GoogleTranslator(source=source, target=target).translate(text)
 
         result = {"text": translated}
         serializer = LanguageSerializer(result, many=False)
