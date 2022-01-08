@@ -8,14 +8,15 @@ from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework.schemas import AutoSchema
 from rest_framework.views import APIView
-
+import socks
 from .view_models.translate_result_vm import LanguageSerializer
 
 from deep_translator import GoogleTranslator, MyMemoryTranslator, DeepL
+from yandexfreetranslate import YandexFreeTranslate
 # Translator = GoogleTranslator(source='auto', target='ru')
 # translated = GoogleTranslator(source='auto', target='de').translate("keep it up, you are awesome")  # output -> Weiter so, du bist großartig
 
-
+yt = YandexFreeTranslate(api='ios')
 
 class DeviceViewSchema(AutoSchema):
     """
@@ -25,6 +26,7 @@ class DeviceViewSchema(AutoSchema):
 handlers = {
     "google": lambda source, target, text: GoogleTranslator(source=source, target=target).translate(text),
     "mymemory": lambda source, target, text: MyMemoryTranslator(source=source, target=target).translate(text),
+    "yandex": lambda source, target, text: yt.translate(source=source, target=target, text=text),
 }
 
 def translate(translator, source, target, text):
@@ -43,7 +45,7 @@ class TranslateView(APIView):
     #schema = DeviceViewSchema()
 
     #param_get_source = openapi.Parameter('source', in_=openapi.IN_QUERY, description='source language', type=openapi.TYPE_STRING, required=True )
-    param_get_translator = openapi.Parameter('translator', openapi.IN_QUERY, 'example: google / mymemory', type=openapi.TYPE_STRING, required=False)
+    param_get_translator = openapi.Parameter('translator', openapi.IN_QUERY, 'example: google / mymemory / yandex', type=openapi.TYPE_STRING, required=False)
     param_get_source = openapi.Parameter('source', openapi.IN_QUERY, 'source language', type=openapi.TYPE_STRING, required=True)
     param_get_target = openapi.Parameter('target', openapi.IN_QUERY, 'target language', type=openapi.TYPE_STRING, required=True)
     param_get_text = openapi.Parameter('text', openapi.IN_QUERY, 'text to translate', type=openapi.TYPE_STRING, required=True)
@@ -67,7 +69,7 @@ class TranslateView(APIView):
     @swagger_auto_schema(method='post', request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'translator': openapi.Schema(type=openapi.TYPE_STRING, description='google'),
+            'translator': openapi.Schema(type=openapi.TYPE_STRING, description='example: google / mymemory / yandex'),
             'source': openapi.Schema(type=openapi.TYPE_STRING, description='en'),
             'target': openapi.Schema(type=openapi.TYPE_STRING, description='ru'),
             'text': openapi.Schema(type=openapi.TYPE_STRING, description='hi'),
